@@ -20,6 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4088389006012694}
   - component: {fileID: 120622422825727322}
+  - component: {fileID: 114537878934810832}
+  - component: {fileID: 114724013685281120}
   m_Layer: 0
   m_Name: DrawLine
   m_TagString: Untagged
@@ -40,6 +42,59 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114537878934810832
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1608932962623236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 161
+    i1: 14
+    i2: 186
+    i3: 202
+    i4: 32
+    i5: 50
+    i6: 12
+    i7: 84
+    i8: 75
+    i9: 244
+    i10: 86
+    i11: 229
+    i12: 68
+    i13: 102
+    i14: 235
+    i15: 49
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
+--- !u!114 &114724013685281120
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1608932962623236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TransformSyncMode: 1
+  m_SendInterval: 0
+  m_SyncRotationAxis: 7
+  m_RotationSyncCompression: 0
+  m_SyncSpin: 0
+  m_MovementTheshold: 0.001
+  m_VelocityThreshold: 0.0001
+  m_SnapThreshold: 5
+  m_InterpolateRotation: 1
+  m_InterpolateMovement: 1
 --- !u!120 &120622422825727322
 LineRenderer:
   m_ObjectHideFlags: 1
@@ -78,7 +133,7 @@ LineRenderer:
   m_Positions: []
   m_Parameters:
     serializedVersion: 2
-    widthMultiplier: 0.02
+    widthMultiplier: 0.015
     widthCurve:
       serializedVersion: 2
       m_Curve:
