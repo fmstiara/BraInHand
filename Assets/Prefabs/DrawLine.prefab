@@ -22,9 +22,10 @@ GameObject:
   - component: {fileID: 120622422825727322}
   - component: {fileID: 114537878934810832}
   - component: {fileID: 114724013685281120}
+  - component: {fileID: 114366307636565078}
   m_Layer: 0
   m_Name: DrawLine
-  m_TagString: Untagged
+  m_TagString: DrawLine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -42,6 +43,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114366307636565078
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1608932962623236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbd7abded05dbf64690bffa18bb19d98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_lineRenderer: {fileID: 120622422825727322}
+  m_lineCollider: {fileID: 114808324247661270, guid: b53663c41725626459e7c4abbdada5e6,
+    type: 2}
 --- !u!114 &114537878934810832
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -73,7 +88,7 @@ MonoBehaviour:
     i14: 235
     i15: 49
   m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
+  m_LocalPlayerAuthority: 1
 --- !u!114 &114724013685281120
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -126,7 +141,7 @@ LineRenderer:
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
+  m_LightmapParameters: {fileID: 15204, guid: 0000000000000000f000000000000000, type: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -146,13 +161,22 @@ LineRenderer:
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.6681366
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
       key0: {r: 0.2, g: 0.2, b: 0.2, a: 1}
-      key1: {r: 0.20000002, g: 0.20000002, b: 0.20000002, a: 1}
+      key1: {r: 0.2, g: 0.2, b: 0.2, a: 0.9411765}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -183,5 +207,5 @@ LineRenderer:
     alignment: 0
     textureMode: 0
     generateLightingData: 0
-  m_UseWorldSpace: 1
+  m_UseWorldSpace: 0
   m_Loop: 0
