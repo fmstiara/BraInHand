@@ -19,9 +19,9 @@ public class NetworkPlayerSetup : NetworkBehaviour
         {
             //FPSCharacterCamを使うため、Scene Cameraを非アクティブ化
             GameObject.Find("Main-Camera").SetActive(false);
-            GetComponent<OvrAvatar>().enabled = true;
-            GetComponent<MainControllerManager>().enabled = true;
-            m_OVRCameraRig.gameObject.SetActive(true);
+            //GetComponent<OvrAvatar>().enabled = true;
+            //GetComponent<MainControllerManager>().enabled = true;
+            //m_OVRCameraRig.gameObject.SetActive(true);
             
             if (isServer)
             {

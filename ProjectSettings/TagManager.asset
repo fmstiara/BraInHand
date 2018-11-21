@@ -6,8 +6,9 @@ TagManager:
   tags:
   - DrawLine
   - DrawObjects
-  - DrawLines
   - DrawLineCollider
+  - DrawObject
+  - PaletteObject
   layers:
   - Default
   - TransparentFX

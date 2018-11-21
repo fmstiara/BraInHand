@@ -3,25 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class MainControllerManager : NetworkBehaviour
+public partial class MainControllerManager : NetworkBehaviour
 {
 
-    [SerializeField] private GameObject _DrawLinePrefab;
     [SerializeField] private Transform _HandAnchor;
     [SerializeField] private float _MaxDistance = 100.0f; // 距離
     [SerializeField] private LineRenderer _LaserPointerRenderer; // LineRenderer
-    [SerializeField] private GameObject PaletteColor;
 
-    GameObject CurrentLine;
-    GameObject DrawLines;
+    GameObject DrawObjects;
+    GameObject CurrentDrawObject;
 
     private Vector3 lastPointerPosition;
-    private bool isGrabbing = false;
-    private GameObject grabObject;
-
-    private int penMode = 0; //0=black, 1=red, 2=green, 3=blue, 4=yellow
-    private int operateMode = 0; //0=draw mode, 1=object mode, 2=eraser mode
-
+    private int operateMode = 0; //0=draw , 1=object mode, 2=eraser mode
 
     private Transform Pointer
     {
@@ -39,8 +32,10 @@ public class MainControllerManager : NetworkBehaviour
             return;
         }
 
-        DrawLines = GameObject.FindWithTag("DrawObjects");
-        DrawLines.transform.SetParent(null);
+        DrawObjects = GameObject.FindWithTag("DrawObjects");
+        DrawObjects.transform.SetParent(null);
+        AddDrawObject();
+        SetOperateMode();
     }
 
     // Update is called once per frame
@@ -53,9 +48,6 @@ public class MainControllerManager : NetworkBehaviour
 
         if (OnWindows())
         {
-            OnChangeLineColor();
-            OnChangeMode();
-            DrawOnSpace();
             if (PointingForm(true))
             {
                 ShowLaserPointer();
@@ -65,10 +57,43 @@ public class MainControllerManager : NetworkBehaviour
                 HideLaserPointer();
             }
 
-            if (isGrabbing)
+            OnChangeOperateMode();
+            switch (operateMode)
             {
-                MoveObject();
+                case 0:
+                    OnChangeLineColor();
+                    DrawOnSpace();
+                    break;
+                case 1:
+                    //object操作
+                    OnChangeObjectMode();
+
+                    if (objectMode==0 && isGrabbing)
+                    {
+                        OnMoveObject();
+                    }
+                    else if (objectMode == 1)
+                    {
+                        OnAddObject();
+                    }
+                    else if (objectMode == 2)
+                    {
+                        //OnDeleteObject();
+                    }
+                    break;
+                case 2:
+                    //eraser mode
+                    break;
+                default:
+                    break;
             }
+
+            var pointer = Pointer;
+            if (pointer == null || _LaserPointerRenderer == null)
+            {
+                return;
+            }
+            lastPointerPosition = pointer.position;
         }
         else
         {
@@ -78,124 +103,43 @@ public class MainControllerManager : NetworkBehaviour
 
     }
 
-    void MoveObject()
-    {
-        var pointer = Pointer;
-        if (pointer == null || _LaserPointerRenderer == null)
-        {
-            return;
-        }
-        if(lastPointerPosition != null)
-        {
-            Vector3 move = pointer.position - lastPointerPosition;
-            Debug.Log(move);
-            grabObject.transform.position += move;
-        }
-        if (OVRInput.GetUp(OVRInput.RawButton.RHandTrigger))
-        {
-            isGrabbing = false;
-        }
-        lastPointerPosition = pointer.position;
-    }
-
-    void DrawOnSpace()
-    {
-        var pointer = Pointer;
-        if (pointer == null)
-        {
-            Debug.Log("pointer not defiend");
-            return;
-        }
-
-        if (OVRInput.Get(OVRInput.RawButton.RIndexTrigger))
-        {
-            if (CurrentLine == null)
-            {
-                CurrentLine = Instantiate(_DrawLinePrefab, new Vector3(0,0,0), Quaternion.identity);
-                NetworkLineRenderer line = CurrentLine.GetComponent<NetworkLineRenderer>();
-                NetworkServer.Spawn(CurrentLine);
-                line.CmdSetColorMode(penMode);
-                line.CmdAddPosition(pointer.position);
-            }
-            else
-            {
-                NetworkLineRenderer line = CurrentLine.GetComponent<NetworkLineRenderer>();
-                line.CmdAddPosition(pointer.position);
-            }
-        }
-        else if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
-        {
-            if (CurrentLine != null)
-            {
-                CurrentLine.transform.SetParent(DrawLines.transform);
-                CurrentLine = null;
-            }
-        }
-    }
-
-    void OnChangeMode()
+    void OnChangeOperateMode()
     {
         if (OVRInput.GetDown(OVRInput.RawButton.LThumbstickUp))
         {
-            operateMode++;
-            if (operateMode > 2)
-                operateMode = 0;
+            operateMode--;
+            if (operateMode < 0)
+                operateMode = 1;
+
+            SetOperateMode();
         }
         else if (OVRInput.GetDown(OVRInput.RawButton.LThumbstickDown))
         {
-            operateMode--;
-            if (operateMode > 2)
-                operateMode = 2;
+
+            operateMode++;
+            if (operateMode > 1)
+                operateMode = 0;
+
+            SetOperateMode();
         }
     }
 
-    void OnChangeLineColor()
+    void SetOperateMode()
     {
-        if (OVRInput.GetDown(OVRInput.RawButton.LThumbstickRight))
+        Debug.Log("change operate mode : " + operateMode.ToString());
+        GameObject[] palettes = GameObject.FindGameObjectsWithTag("PaletteObject");
+        for(int i=0; i<palettes.Length; i++)
         {
-            penMode++;
-            if (penMode > 4)
-                penMode = 0;
-
-            PaletteColor.GetComponent<Renderer>().material.color = GetColor(penMode);
-        }
-        else if (OVRInput.GetDown(OVRInput.RawButton.LThumbstickLeft))
-        {
-            penMode--;
-            if (penMode < 0)
-                penMode = 4;
-
-            PaletteColor.GetComponent<Renderer>().material.color = GetColor(penMode);
+            if(i != operateMode)
+            {
+                palettes[i].GetComponent<Renderer>().material.color = new Color(0.7f, 0.7f, 0.7f);
+            }
+            else
+            {
+                palettes[i].GetComponent<Renderer>().material.color = Color.white;
+            }
         }
     }
-
-    Color GetColor(int _colorMode)
-    {
-        Color res;
-        switch (_colorMode)
-        {
-            case 0:
-                res = new Color(0.2f, 0.2f, 0.2f);
-                break;
-            case 1:
-                res = new Color(0.9f, 0.2f, 0.2f);
-                break;
-            case 2:
-                res = new Color(0.2f, 0.9f, 0.2f);
-                break;
-            case 3:
-                res = new Color(0.2f, 0.2f, 0.9f);
-                break;
-            case 4:
-                res = new Color(0.9f, 0.9f, 0.2f);
-                break;
-            default:
-                res = new Color(0.2f, 0.2f, 0.2f);
-                break;
-        }
-        return res;
-    }
-
 
     void HideLaserPointer()
     {
@@ -235,8 +179,9 @@ public class MainControllerManager : NetworkBehaviour
             {
                 if (OVRInput.GetDown(OVRInput.RawButton.RHandTrigger))
                 {
-                    Debug.Log("Grabbing a Object");
-                    grabObject = hitInfo.collider.gameObject.transform.root.gameObject;
+                    //collider < drawline < drawobject
+                    grabObject = hitInfo.collider.gameObject.transform.parent.gameObject.transform.parent.gameObject;
+                    Debug.Log("Grabbing a Object with \"" + grabObject.tag + "\" tag");
                     isGrabbing = true;
                 }
             }
