@@ -18,7 +18,7 @@ public class LineCollider : MonoBehaviour {
     {
         BoxCollider collider = GetComponent<BoxCollider>();
         float lineLength = Vector3.Distance(_new, _last);
-        collider.size = new Vector3(0.02f, 0.02f, lineLength);
+        collider.size = new Vector3(0.05f, 0.05f, lineLength);
 
         Vector3 middlePoint = (_new + _last) / 2;
         collider.transform.position = middlePoint;

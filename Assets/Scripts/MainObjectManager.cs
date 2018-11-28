@@ -10,7 +10,7 @@ public partial class MainControllerManager : NetworkBehaviour
     private bool isGrabbing = false;
     private GameObject grabObject;
 
-    private int objectMode = 0; //0=move, 1=add, 2=delete
+    private int objectMode = 0; //0=move, 1=edit
 
     void OnChangeObjectMode()
     {
@@ -77,7 +77,7 @@ public partial class MainControllerManager : NetworkBehaviour
         {
             Vector3 move = pointer.position - lastPointerPosition;
             //Debug.Log(move);
-            grabObject.transform.position += move;
+            grabObject.transform.position += move*5;
         }
         if (OVRInput.GetUp(OVRInput.RawButton.RHandTrigger))
         {

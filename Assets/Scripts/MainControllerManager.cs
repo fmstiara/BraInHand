@@ -184,6 +184,12 @@ public partial class MainControllerManager : NetworkBehaviour
                     Debug.Log("Grabbing a Object with \"" + grabObject.tag + "\" tag");
                     isGrabbing = true;
                 }
+                else if (OVRInput.GetDown(OVRInput.RawButton.B))
+                {
+                    // line objectの削除
+                    GameObject line = hitInfo.collider.gameObject.transform.parent.gameObject;
+                    Destroy(line);
+                }
             }
         }
         else
