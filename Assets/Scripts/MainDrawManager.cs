@@ -16,8 +16,7 @@ public partial class MainControllerManager
 
     void DrawOnSpace()
     {
-        var pointer = Pointer;
-        if (pointer == null)
+        if (_HandAnchor == null)
         {
             Debug.Log("pointer not defiend");
             return;
@@ -31,19 +30,19 @@ public partial class MainControllerManager
                 NetworkLineRenderer line = CurrentLine.GetComponent<NetworkLineRenderer>();
                 NetworkServer.Spawn(CurrentLine);
                 line.CmdSetColorMode(penMode);
-                line.CmdAddPosition(pointer.position);
+                line.CmdAddPosition(_HandAnchor.position);
             }
             else
             {
                 NetworkLineRenderer line = CurrentLine.GetComponent<NetworkLineRenderer>();
-                line.CmdAddPosition(pointer.position);
+                line.CmdAddPosition(_HandAnchor.position);
             }
         }
         else if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
         {
             if (CurrentLine != null)
             {
-                CurrentLine.transform.SetParent(CurrentDrawObject.transform);
+                CurrentDrawObject.GetComponent<NetworkDrawObject>().CmdSetChild(CurrentLine);
                 CurrentLine = null;
             }
         }

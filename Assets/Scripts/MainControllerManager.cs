@@ -7,22 +7,14 @@ public partial class MainControllerManager : NetworkBehaviour
 {
 
     [SerializeField] private Transform _HandAnchor;
+    [SerializeField] private Transform _SubHandAnchor;
     [SerializeField] private float _MaxDistance = 100.0f; // 距離
     [SerializeField] private LineRenderer _LaserPointerRenderer; // LineRenderer
 
-    GameObject DrawObjects;
     GameObject CurrentDrawObject;
 
     private Vector3 lastPointerPosition;
-    private int operateMode = 0; //0=draw , 1=object mode, 2=eraser mode
-
-    private Transform Pointer
-    {
-        get
-        {
-            return _HandAnchor;
-        }
-    }
+    private Vector3 lastHandAnchorsDiff;
 
     // Use this for initialization
     void Start()
@@ -32,10 +24,7 @@ public partial class MainControllerManager : NetworkBehaviour
             return;
         }
 
-        DrawObjects = GameObject.FindWithTag("DrawObjects");
-        DrawObjects.transform.SetParent(null);
         AddDrawObject();
-        SetOperateMode();
     }
 
     // Update is called once per frame
@@ -57,87 +46,22 @@ public partial class MainControllerManager : NetworkBehaviour
                 HideLaserPointer();
             }
 
-            OnChangeOperateMode();
-            switch (operateMode)
-            {
-                case 0:
-                    OnChangeLineColor();
-                    DrawOnSpace();
-                    break;
-                case 1:
-                    //object操作
-                    OnChangeObjectMode();
+            OnChangeLineColor();
+            DrawOnSpace();
+            OnMoveObject();
+            OnAddObject();
 
-                    if (objectMode==0 && isGrabbing)
-                    {
-                        OnMoveObject();
-                    }
-                    else if (objectMode == 1)
-                    {
-                        OnAddObject();
-                    }
-                    else if (objectMode == 2)
-                    {
-                        //OnDeleteObject();
-                    }
-                    break;
-                case 2:
-                    //eraser mode
-                    break;
-                default:
-                    break;
-            }
-
-            var pointer = Pointer;
-            if (pointer == null || _LaserPointerRenderer == null)
+            if (_HandAnchor == null || _LaserPointerRenderer == null)
             {
                 return;
             }
-            lastPointerPosition = pointer.position;
+
+            lastPointerPosition = _HandAnchor.position;
+            lastHandAnchorsDiff = _HandAnchor.position - _SubHandAnchor.position;
         }
         else
         {
             ShowLaserPointer();
-        }
-
-
-    }
-
-    void OnChangeOperateMode()
-    {
-        if (OVRInput.GetDown(OVRInput.RawButton.LThumbstickUp))
-        {
-            operateMode--;
-            if (operateMode < 0)
-                operateMode = 1;
-
-            SetOperateMode();
-        }
-        else if (OVRInput.GetDown(OVRInput.RawButton.LThumbstickDown))
-        {
-
-            operateMode++;
-            if (operateMode > 1)
-                operateMode = 0;
-
-            SetOperateMode();
-        }
-    }
-
-    void SetOperateMode()
-    {
-        Debug.Log("change operate mode : " + operateMode.ToString());
-        GameObject[] palettes = GameObject.FindGameObjectsWithTag("PaletteObject");
-        for(int i=0; i<palettes.Length; i++)
-        {
-            if(i != operateMode)
-            {
-                palettes[i].GetComponent<Renderer>().material.color = new Color(0.7f, 0.7f, 0.7f);
-            }
-            else
-            {
-                palettes[i].GetComponent<Renderer>().material.color = Color.white;
-            }
         }
     }
 
@@ -149,12 +73,11 @@ public partial class MainControllerManager : NetworkBehaviour
     void ShowLaserPointer()
     {
         _LaserPointerRenderer.enabled = true;
-        var pointer = Pointer;
-        if (pointer == null || _LaserPointerRenderer == null)
+       if (_HandAnchor == null || _LaserPointerRenderer == null)
         {
             return;
         }
-        Ray pointerRay = new Ray(pointer.position, pointer.forward);
+        Ray pointerRay = new Ray(_HandAnchor.position, _HandAnchor.forward);
         _LaserPointerRenderer.SetPosition(0, pointerRay.origin);
 
         RaycastHit hitInfo;

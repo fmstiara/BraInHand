@@ -6,6 +6,8 @@ using UnityEngine.Networking;
 public class NetworkPlayerSetup : NetworkBehaviour
 {
     [SerializeField] OVRCameraRig m_OVRCameraRig;
+    [SerializeField] GameObject GoAssets;
+    [SerializeField] GameObject RiftAssets;
 
     void Start()
     {
@@ -14,7 +16,7 @@ public class NetworkPlayerSetup : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-        Debug.Log("Player Network Setup");
+        //Debug.Log("Player Network Setup");
         if (isLocalPlayer)
         {
             //FPSCharacterCamを使うため、Scene Cameraを非アクティブ化
@@ -25,25 +27,25 @@ public class NetworkPlayerSetup : NetworkBehaviour
             
             if (isServer)
             {
-                NonActiveGoAssets();
+                Debug.Log("Player set up on Server");
+                ActivateRiftAssets();
             }
             else if (isClient)
             {
-                NonActiveRiftAssets();
+                Debug.Log("Player set up as Client");
+                ActivateGoAssets();
             }
         }
     }
 
-    private void NonActiveGoAssets()
+    private void ActivateGoAssets()
     {
-        GameObject.Find("GoAssets").SetActive(false);
-        GameObject.Find("GoPlayerAssets").SetActive(false);
+        GoAssets.SetActive(true);
     }
 
-    private void NonActiveRiftAssets()
+    private void ActivateRiftAssets()
     {
-        GameObject.Find("RiftAssets").SetActive(false);
-        GameObject.Find("RiftPlayerAssets").SetActive(false);
+        RiftAssets.SetActive(true);
     }
 
     void Update()

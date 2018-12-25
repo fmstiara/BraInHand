@@ -12,16 +12,16 @@ using Oculus.Platform.Models;
 public class SocialPlatformManager : MonoBehaviour
 {
     private static readonly Vector3 START_ROTATION_ONE = new Vector3(0, 180, 0);
-    private static readonly Vector3 START_POSITION_ONE = new Vector3(0, 2, 5);
+    private static readonly Vector3 START_POSITION_ONE = new Vector3(0, 4, 5);
 
     private static readonly Vector3 START_ROTATION_TWO = new Vector3(0, 0, 0);
-    private static readonly Vector3 START_POSITION_TWO = new Vector3(0, 2, -5);
+    private static readonly Vector3 START_POSITION_TWO = new Vector3(0, 4, -5);
 
     private static readonly Vector3 START_ROTATION_THREE = new Vector3(0, 270, 0);
-    private static readonly Vector3 START_POSITION_THREE = new Vector3(5, 2, 0);
+    private static readonly Vector3 START_POSITION_THREE = new Vector3(5, 4, 0);
 
     private static readonly Vector3 START_ROTATION_FOUR = new Vector3(0, 90, 0);
-    private static readonly Vector3 START_POSITION_FOUR = new Vector3(-5, 2, 0);
+    private static readonly Vector3 START_POSITION_FOUR = new Vector3(-5, 4, 0);
 
     private static readonly Color BLACK = new Color(0.0f, 0.0f, 0.0f);
     private static readonly Color WHITE = new Color(1.0f, 1.0f, 1.0f);
@@ -167,7 +167,7 @@ public class SocialPlatformManager : MonoBehaviour
         if (UnityEngine.Application.platform == RuntimePlatform.Android)
         {
             helpPanel.transform.SetParent(localAvatar.transform.Find("body"), false);
-            helpPanel.transform.localPosition = new Vector3(0, 0.0f, 1.0f);
+            helpPanel.transform.localPosition = new Vector3(0, 1.0f, 1.0f);
             helpMesh.material = gearMaterial;
         }
         else
@@ -177,7 +177,7 @@ public class SocialPlatformManager : MonoBehaviour
             helpMesh.material = riftMaterial;
         }
         
-        localAvatar.oculusUserIDInternal = myID;
+        localAvatar.oculusUserID = myID.ToString();
         localAvatar.RecordPackets = true;
         localAvatar.PacketRecorded += OnLocalAvatarPacketRecorded;
         localAvatar.EnableMouthVertexAnimation = true;
@@ -262,7 +262,7 @@ public class SocialPlatformManager : MonoBehaviour
         foreach (KeyValuePair<ulong, RemotePlayer> kvp in remoteUsers)
         {
             //LogOutputLine("Sending avatar Packet to  " + kvp.Key);
-            p2pManager.SendAvatarUpdate(kvp.Key, this.transform, packetSequence, toSend);
+            p2pManager.SendAvatarUpdate(kvp.Key, this.localAvatar.transform, packetSequence, toSend);
         }
 
         packetSequence++;
@@ -484,7 +484,7 @@ public class SocialPlatformManager : MonoBehaviour
         RemotePlayer remoteUser = new RemotePlayer();
 
         remoteUser.RemoteAvatar = Instantiate(s_instance.remoteAvatarPrefab);
-        remoteUser.RemoteAvatar.oculusUserIDInternal = userID;
+        remoteUser.RemoteAvatar.oculusUserID = userID.ToString();
         remoteUser.RemoteAvatar.ShowThirdPerson = true;
         remoteUser.RemoteAvatar.EnableMouthVertexAnimation = true;
         remoteUser.p2pConnectionState = PeerConnectionState.Unknown;

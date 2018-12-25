@@ -28,6 +28,6 @@ public class LineCollider : MonoBehaviour {
 
     private void OnTriggerEnter(Collider collider)
     {
-        Debug.Log("on collision enter");
+        //Debug.Log("on collision enter");
     }
 }

@@ -149,7 +149,7 @@ public class OvrAvatarMaterialManager : MonoBehaviour
                 LocalAvatarConfig.ComponentMaterialProperties.Length,
                  localProps.Textures[0].format,
                 true,
-                false
+                QualitySettings.activeColorSpace == ColorSpace.Gamma ? false : true
             ) { filterMode = FilterMode.Trilinear };
 
             TextureArrays[i].Textures 
@@ -309,7 +309,8 @@ public class OvrAvatarMaterialManager : MonoBehaviour
                         + " "
                         + props[propIndex - 1].Textures[textureIndex].height 
                         + " vs " 
-                        + props[propIndex].Textures[textureIndex].height);
+                        + props[propIndex].Textures[textureIndex].height
+                        + " Ensure you are using ASTC texture compression on Android or turn off CombineMeshes");
                 }
 
                 if (props[propIndex - 1].Textures[textureIndex].format
@@ -318,7 +319,8 @@ public class OvrAvatarMaterialManager : MonoBehaviour
                     throw new System.Exception(
                         props[propIndex].TypeIndex.ToString()
                         + " Mismatching Formats: "
-                        + ((TextureType)textureIndex).ToString());
+                        + ((TextureType)textureIndex).ToString()
+                        + " Ensure you are using ASTC texture compression on Android or turn off CombineMeshes");
                 }
             }
         }

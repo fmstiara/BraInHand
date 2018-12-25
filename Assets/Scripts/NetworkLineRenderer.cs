@@ -10,12 +10,6 @@ public class NetworkLineRenderer: NetworkBehaviour {
 
     private Vector3 lastPosition;
 
-    [SyncVar(hook = "OnDrawing")]
-    private Vector3 addPosition;
-
-    [SyncVar(hook = "OnSetColorMode")]
-    private int colorMode; //0=black, 1=red, 2=green, 3=blue, 4=yellow
-
     Color LineColor = new Color(0.2f, 0.2f, 0.2f);
     Gradient LineGradient;
 
@@ -30,29 +24,14 @@ public class NetworkLineRenderer: NetworkBehaviour {
         {
             return;
         }
+
 	}
-
-    void OnDrawing(Vector3 p)
-    {
-        int NextPositionIndex = m_lineRenderer.positionCount;
-        m_lineRenderer.positionCount = NextPositionIndex + 1;
-        m_lineRenderer.SetPosition(NextPositionIndex, p);
-
-        AddColliderToLine(lastPosition, addPosition);
-    }
 
     void AddColliderToLine(Vector3 _last, Vector3 _new)
     {
         LineCollider collider = Instantiate(m_lineCollider, new Vector3(0, 0, 0), Quaternion.identity);
         collider.transform.SetParent(this.gameObject.transform);
         collider.Set(_last, _new);
-    }
-
-    void OnSetColorMode(int m)
-    {
-        LineColor = GetColor(m);
-        LineGradient = GetGradient(LineColor);
-        m_lineRenderer.colorGradient = LineGradient;
     }
 
     Color GetColor(int _colorMode)
@@ -102,11 +81,18 @@ public class NetworkLineRenderer: NetworkBehaviour {
             Debug.Log("isn't Server");
             return;
         }
-        if(addPosition != null)
-        {
-            lastPosition = addPosition;
-        }
-        addPosition = p;
+        RpcAddPosition(p);
+    }
+
+    [ClientRpc]
+    void RpcAddPosition(Vector3 p)
+    {
+        int NextPositionIndex = m_lineRenderer.positionCount;
+        m_lineRenderer.positionCount = NextPositionIndex + 1;
+        m_lineRenderer.SetPosition(NextPositionIndex, p);
+
+        AddColliderToLine(lastPosition, p);
+        lastPosition = p;
     }
 
     [Command]
@@ -117,6 +103,14 @@ public class NetworkLineRenderer: NetworkBehaviour {
             Debug.Log("isn't Server");
             return;
         }
-        colorMode = m;
+        RpcSetColorMode(m);
+    }
+
+    [ClientRpc]
+    void RpcSetColorMode(int m)
+    {
+        LineColor = GetColor(m);
+        LineGradient = GetGradient(LineColor);
+        m_lineRenderer.colorGradient = LineGradient;
     }
 }

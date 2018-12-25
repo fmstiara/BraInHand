@@ -6,49 +6,10 @@ using TMPro;
 
 public partial class MainControllerManager : NetworkBehaviour
 {
-    [SerializeField] private GameObject ObjectModeText;
+    [SerializeField] private GameObject _DrawObjectPrefab;
     private bool isGrabbing = false;
     private GameObject grabObject;
-
-    private int objectMode = 0; //0=move, 1=edit
-
-    void OnChangeObjectMode()
-    {
-        
-        if (OVRInput.GetDown(OVRInput.RawButton.LThumbstickRight))
-        {
-            objectMode++;
-            if (objectMode > 1)
-                objectMode = 0;
-
-            SetObjectMode();
-            
-        }
-        else if (OVRInput.GetDown(OVRInput.RawButton.LThumbstickLeft))
-        {
-            objectMode--;
-            if (objectMode < 0)
-                objectMode = 1;
-
-            SetObjectMode();
-        }
-    }
-
-    void SetObjectMode()
-    {
-        Debug.Log("object mode change : " + objectMode.ToString());
-        switch (objectMode)
-        {
-            case 0:
-                ObjectModeText.GetComponent<TextMeshPro>().text = "MOVE";
-                break;
-            case 1:
-                ObjectModeText.GetComponent<TextMeshPro>().text = "EDIT";
-                break;
-            default:
-                break;
-        }
-    }
+    private float baseDistance = -1;
 
     void OnAddObject()
     {
@@ -60,33 +21,45 @@ public partial class MainControllerManager : NetworkBehaviour
 
     void AddDrawObject()
     {
-        CurrentDrawObject = new GameObject();
-        CurrentDrawObject.name = "obj" + DrawObjects.transform.childCount.ToString();
-        CurrentDrawObject.tag = "DrawObject";
-        CurrentDrawObject.transform.SetParent(DrawObjects.transform);
+        CurrentDrawObject = null;
+        CurrentDrawObject = Instantiate(_DrawObjectPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        NetworkServer.Spawn(CurrentDrawObject);
     }
 
     void OnMoveObject()
     {
-        var pointer = Pointer;
-        if (pointer == null || _LaserPointerRenderer == null)
+        if (_HandAnchor == null || _LaserPointerRenderer == null)
         {
             return;
         }
-        if (lastPointerPosition != null)
+        if (lastPointerPosition != null && isGrabbing)
         {
-            Vector3 move = pointer.position - lastPointerPosition;
-            //Debug.Log(move);
-            grabObject.transform.position += move*5;
+            if (OVRInput.Get(OVRInput.RawButton.LHandTrigger))//両手で中指を引いてるとき
+            {
+                Debug.Log("double grab");
+                Vector3 currentHandAnchorsDiff = _HandAnchor.position - _SubHandAnchor.position;
+                if (baseDistance < 0)
+                {
+                    baseDistance = currentHandAnchorsDiff.magnitude;
+                }
+                else
+                {
+                    float distRate = currentHandAnchorsDiff.magnitude / baseDistance;
+                    grabObject.transform.localScale = new Vector3(distRate, distRate, distRate);
+                }
+            }
+            else//右手だけ中指を引いてるとき
+            {
+                Vector3 move = _HandAnchor.position - lastPointerPosition;
+                //Debug.Log(move);
+                //grabObject.transform.position += move * 4;
+                grabObject.GetComponent<NetworkDrawObject>().CmdMovePosition(move);
+            }
         }
         if (OVRInput.GetUp(OVRInput.RawButton.RHandTrigger))
         {
             isGrabbing = false;
+            baseDistance = -1f;
         }
-    }
-
-    void ChangeCurrentObject()
-    {
-
     }
 }
