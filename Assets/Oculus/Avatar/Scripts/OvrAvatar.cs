@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System;
 using System.Linq;
@@ -141,7 +141,7 @@ public class OvrAvatar : MonoBehaviour
         IndexTip,
         ThumbBase,
         ThumbTip,
-       
+
         Max,
     }
 
@@ -231,18 +231,18 @@ public class OvrAvatar : MonoBehaviour
     }
 
     private OvrAvatarSkinnedMeshPBSV2RenderComponent AddSkinnedMeshRenderPBSV2Component(
-        IntPtr renderPart, 
-        GameObject gameObject, 
+        IntPtr renderPart,
+        GameObject gameObject,
         ovrAvatarRenderPart_SkinnedMeshRenderPBS_V2 skinnedMeshRenderPBSV2,
         OvrAvatarMaterialManager materialManager)
     {
         OvrAvatarSkinnedMeshPBSV2RenderComponent skinnedMeshRenderer = gameObject.AddComponent<OvrAvatarSkinnedMeshPBSV2RenderComponent>();
         skinnedMeshRenderer.Initialize(
-            renderPart, 
+            renderPart,
             skinnedMeshRenderPBSV2,
             materialManager,
-            ThirdPersonLayer.layerIndex, 
-            FirstPersonLayer.layerIndex, 
+            ThirdPersonLayer.layerIndex,
+            FirstPersonLayer.layerIndex,
             renderPartCount++,
             gameObject.name.Contains("body") && CombineMeshes,
             LevelOfDetail);
@@ -529,8 +529,8 @@ public class OvrAvatar : MonoBehaviour
             if (OvrAvatarSDKManager.Instance.GetAsset(id) == null)
             {
                 OvrAvatarSDKManager.Instance.BeginLoadingAsset(
-                    id, 
-                    LevelOfDetail, 
+                    id,
+                    LevelOfDetail,
                     AssetLoadedCallback);
 
                 assetLoadingIds.Add(id);
@@ -540,7 +540,7 @@ public class OvrAvatar : MonoBehaviour
         if (CombineMeshes)
         {
             OvrAvatarSDKManager.Instance.RegisterCombinedMeshCallback(
-                sdkAvatar, 
+                sdkAvatar,
                 CombinedMeshLoadedCallback);
         }
     }
@@ -769,8 +769,8 @@ public class OvrAvatar : MonoBehaviour
     }
 
     private void AddRenderParts(
-        OvrAvatarComponent ovrComponent, 
-        ovrAvatarComponent component, 
+        OvrAvatarComponent ovrComponent,
+        ovrAvatarComponent component,
         Transform parent)
     {
         for (UInt32 renderPartIndex = 0; renderPartIndex < component.renderPartCount; renderPartIndex++)
@@ -898,18 +898,18 @@ public class OvrAvatar : MonoBehaviour
         return null;
     }
 
-    static Vector3 MOUTH_POSITION_OFFSET = new Vector3(0, -0.014f, 0.1051f);
+    static Vector3 MOUTH_POSITION_OFFSET = new Vector3(0, -0.018f, 0.1051f);
     static string VOICE_PROPERTY = "_Voice";
     static string MOUTH_POSITION_PROPERTY = "_MouthPosition";
     static string MOUTH_DIRECTION_PROPERTY = "_MouthDirection";
-    static string MOUTH_SCALE_PROPERTY = "_MouthDistanceScale";
-    
-    static float MOUTH_SCALE = 0.007f;
-    static float MOUTH_MAX = 0.007f;
+    static string MOUTH_SCALE_PROPERTY = "_MouthEffectScale";
+
+    static float MOUTH_SCALE_GLOBAL = 0.007f;
+    static float MOUTH_MAX_GLOBAL = 0.007f;
     static string NECK_JONT = "root_JNT/body_JNT/chest_JNT/neckBase_JNT/neck_JNT";
 
-    internal float VoiceAmplitude = 0f;
-    internal bool EnableMouthVertexAnimation = false;
+    public float VoiceAmplitude = 0f;
+    public bool EnableMouthVertexAnimation = false;
 
     private void UpdateVoiceBehavior()
     {
@@ -924,7 +924,7 @@ public class OvrAvatar : MonoBehaviour
             VoiceAmplitude = Mathf.Clamp(VoiceAmplitude, 0f, 1f);
 
             if (component.RenderParts.Count > 0)
-            {   
+            {
                 var material = component.RenderParts[0].mesh.sharedMaterial;
                 var neckJoint = component.RenderParts[0].mesh.transform.Find(NECK_JONT);
                 var scaleDiff = neckJoint.TransformPoint(Vector3.up) - neckJoint.position;
@@ -933,10 +933,10 @@ public class OvrAvatar : MonoBehaviour
 
                 material.SetFloat(
                     VOICE_PROPERTY,
-                    Mathf.Min(scaleDiff.magnitude * MOUTH_MAX, scaleDiff.magnitude * VoiceAmplitude * MOUTH_SCALE));
-                
+                    Mathf.Min(scaleDiff.magnitude * MOUTH_MAX_GLOBAL, scaleDiff.magnitude * VoiceAmplitude * MOUTH_SCALE_GLOBAL));
+
                 material.SetVector(
-                    MOUTH_POSITION_PROPERTY, 
+                    MOUTH_POSITION_PROPERTY,
                     neckJoint.TransformPoint(MOUTH_POSITION_OFFSET));
 
                 material.SetVector(MOUTH_DIRECTION_PROPERTY, neckJoint.up);

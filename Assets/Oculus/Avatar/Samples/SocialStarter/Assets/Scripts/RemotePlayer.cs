@@ -14,8 +14,6 @@ public class RemotePlayer
     public PeerConnectionState voipConnectionState;
 
     public OvrAvatar RemoteAvatar;
-    // The in-scene objects representing the user
-    public GameObject remotePlayerBody;
 
     // the last received position updates
     public Vector3 receivedBodyPosition;
