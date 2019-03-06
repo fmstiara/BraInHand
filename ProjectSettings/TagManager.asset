@@ -9,6 +9,8 @@ TagManager:
   - DrawLineCollider
   - DrawObject
   - PaletteObject
+  - Record
+  - Wall
   layers:
   - Default
   - TransparentFX

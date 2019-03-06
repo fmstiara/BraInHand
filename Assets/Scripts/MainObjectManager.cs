@@ -45,15 +45,21 @@ public partial class MainControllerManager : NetworkBehaviour
                 else
                 {
                     float distRate = currentHandAnchorsDiff.magnitude / baseDistance;
-                    grabObject.transform.localScale = new Vector3(distRate, distRate, distRate);
+                    Vector3 standardScale = new Vector3(1, 0.75f, 1);
+                    grabObject.transform.localScale = standardScale * distRate;
                 }
             }
             else//右手だけ中指を引いてるとき
             {
-                Vector3 move = _HandAnchor.position - lastPointerPosition;
-                //Debug.Log(move);
-                //grabObject.transform.position += move * 4;
-                grabObject.GetComponent<NetworkDrawObject>().CmdMovePosition(move);
+                
+                if (grabObject.tag == "DrawObject")
+                {
+                    Vector3 move = _HandAnchor.position - lastPointerPosition;
+                    move.z = 0;
+                    //Debug.Log(move);
+                    grabObject.transform.position += move * 6;
+                    grabObject.GetComponent<NetworkDrawObject>().CmdMovePosition(move); 
+                } 
             }
         }
         if (OVRInput.GetUp(OVRInput.RawButton.RHandTrigger))

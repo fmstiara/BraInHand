@@ -63,7 +63,7 @@ public class NetworkLineRenderer: NetworkBehaviour {
 
     Gradient GetGradient(Color _c)
     {
-        float alpha = 0.8f;
+        float alpha = 1f;
         Gradient gradient = new Gradient();
         gradient.SetKeys(
             new GradientColorKey[] { new GradientColorKey(_c, 0.0f), new GradientColorKey(_c, 1.0f) },

@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "1036484342589",
+    "firebase_url": "https://sketchtalk-a09ef.firebaseio.com",
+    "project_id": "sketchtalk-a09ef",
+    "storage_bucket": "sketchtalk-a09ef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1036484342589:android:a8d268e8a40c1a5e",
+        "android_client_info": {
+          "package_name": "com.tiara.androiddraw"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1036484342589-efqpqigl26nr9lmr82isjarbdo1r62om.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNE9ej40O67WBTnBkyC2m1mU0Yg4awc_g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1036484342589:android:31bf0b6f08f240e7",
+        "android_client_info": {
+          "package_name": "com.tiara.sketchtalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1036484342589-efqpqigl26nr9lmr82isjarbdo1r62om.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNE9ej40O67WBTnBkyC2m1mU0Yg4awc_g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
