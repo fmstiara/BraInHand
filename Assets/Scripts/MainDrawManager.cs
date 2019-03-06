@@ -24,27 +24,37 @@ public partial class MainControllerManager
 
         if (OVRInput.Get(OVRInput.RawButton.RIndexTrigger))
         {
-            if (CurrentLine == null)
-            {
-                CurrentLine = Instantiate(_DrawLinePrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                NetworkLineRenderer line = CurrentLine.GetComponent<NetworkLineRenderer>();
-                NetworkServer.Spawn(CurrentLine);
-                line.CmdSetColorMode(penMode);
-                line.CmdAddPosition(_HandAnchor.position);
-            }
-            else
-            {
-                NetworkLineRenderer line = CurrentLine.GetComponent<NetworkLineRenderer>();
-                line.CmdAddPosition(_HandAnchor.position);
-            }
+            Draw(_HandAnchor.position);
         }
         else if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
         {
-            if (CurrentLine != null)
-            {
-                CurrentDrawObject.GetComponent<NetworkDrawObject>().CmdSetChild(CurrentLine);
-                CurrentLine = null;
-            }
+            finishDrawing();
+        }
+    }
+
+    void Draw(Vector3 pos)
+    {
+        if (CurrentLine == null)
+        {
+            CurrentLine = Instantiate(_DrawLinePrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            NetworkLineRenderer line = CurrentLine.GetComponent<NetworkLineRenderer>();
+            NetworkServer.Spawn(CurrentLine);
+            line.CmdSetColorMode(penMode);
+            line.CmdAddPosition(pos);
+        }
+        else
+        {
+            NetworkLineRenderer line = CurrentLine.GetComponent<NetworkLineRenderer>();
+            line.CmdAddPosition(pos);
+        }
+    }
+
+    void finishDrawing()
+    {
+        if (CurrentLine != null)
+        {
+            CurrentDrawObject.GetComponent<NetworkDrawObject>().CmdSetChild(CurrentLine);
+            CurrentLine = null;
         }
     }
 

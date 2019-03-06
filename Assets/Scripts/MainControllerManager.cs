@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.Networking;
+using Vector3 = UnityEngine.Vector3;
 
 public partial class MainControllerManager : NetworkBehaviour
 {
@@ -37,17 +39,24 @@ public partial class MainControllerManager : NetworkBehaviour
 
         if (OnWindows())
         {
-            if (PointingForm(true))
+//            if (PointingForm(true))
+//            {
+//                ShowLaserPointer();
+//            }
+//            else
+//            {
+//                HideLaserPointer();
+//            }
+
+            if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
             {
-                ShowLaserPointer();
+                finishDrawing();
             }
-            else
-            {
-                HideLaserPointer();
-            }
+            
+            ShowLaserPointer();
 
             OnChangeLineColor();
-            DrawOnSpace();
+//            DrawOnSpace();
             OnMoveObject();
             OnAddObject();
 
@@ -58,6 +67,8 @@ public partial class MainControllerManager : NetworkBehaviour
 
             lastPointerPosition = _HandAnchor.position;
             lastHandAnchorsDiff = _HandAnchor.position - _SubHandAnchor.position;
+
+
         }
         else
         {
@@ -104,7 +115,6 @@ public partial class MainControllerManager : NetworkBehaviour
                 {
                     //collider < drawline < drawobject
                     grabObject = hitInfo.collider.gameObject.transform.parent.gameObject.transform.parent.gameObject;
-                    Debug.Log("Grabbing a Object with \"" + grabObject.tag + "\" tag");
                     isGrabbing = true;
                 }
                 else if (OVRInput.GetDown(OVRInput.RawButton.B))
@@ -113,12 +123,32 @@ public partial class MainControllerManager : NetworkBehaviour
                     GameObject line = hitInfo.collider.gameObject.transform.parent.gameObject;
                     Destroy(line);
                 }
+            } 
+            else if (tagName == "Record")
+            {
+                if (OVRInput.GetDown(OVRInput.RawButton.RHandTrigger))
+                {
+                    grabObject = hitInfo.collider.gameObject;
+                    isGrabbing = true;
+                }
+                else if (OVRInput.Get(OVRInput.RawButton.RHandTrigger))
+                {
+                    hitInfo.collider.gameObject.transform.position = hitInfo.point;
+                }
+            }
+            else if (tagName == "Wall")
+            {
+                if (OVRInput.Get(OVRInput.RawButton.RIndexTrigger))
+                {
+                    Draw(hitInfo.point);
+                }
+
             }
         }
         else
         {
             // Rayがヒットしなかったら向いている方向にMaxDistance伸ばす
-            _LaserPointerRenderer.SetPosition(1, pointerRay.origin + pointerRay.direction * _MaxDistance);
+            _LaserPointerRenderer.SetPosition(1, pointerRay.origin + pointerRay.direction * _MaxDistance);            
         }
     }
 
